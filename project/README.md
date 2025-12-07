@@ -92,3 +92,6 @@ project/
     │   └── mag7_prices.csv                      # Original OHLCV data (2015-2024)
     └── processed/                               # Processed datasets for modeling
 ```
+
+## AI Usage
+I used GitHub Copilot and other similar AI coding assistants for mainly implementing the quantitative finance models alongside some boilerpplate code for data manipulation and visualization. All code was reviewed by me. These tools also made it easier to come up with a document structure like this one for the README.
