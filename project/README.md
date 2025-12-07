@@ -1,10 +1,14 @@
-# MAG7 Stock Volatility Forecasting
+# VolForecast: Equity Portfolio Risk Forecasting
 
 This project analyzes volatility forecasting for the "Magnificent 7" technology stocks (AAPL, MSFT, GOOG, AMZN, TSLA, META, NVDA) using both traditional time series methods and specialized financial models. The analysis demonstrates why domain-specific approaches outperform generic forecasting for financial volatility.
+
+**Course**: EE 344 | **Term**: Fall 2025 | **Author**: Oorjit Chowdhary
 
 ## Project Overview
 
 Financial volatility exhibits unique properties—clustering, persistence, and conditional heteroskedasticity—that generic time series models fail to capture effectively. This project systematically compares traditional econometric approaches (ARIMA, Exponential Smoothing, Prophet) with specialized volatility models (EWMA, GARCH) to demonstrate the importance of domain knowledge in financial modeling.
+
+The analysis covers data from January 2015 to December 2024, implementing rigorous cross-validation to ensure robust findings across different market regimes.
 
 ## Key Concepts Explored
 
@@ -21,71 +25,38 @@ Financial volatility exhibits unique properties—clustering, persistence, and c
 ## Notebooks Structure
 
 ### 1. Data Collection & Exploration (`01_data_collection_exploration.ipynb`)
-- Downloads daily OHLCV data for MAG7 stocks using yfinance
+- Downloads daily OHLCV data for MAG7 stocks using yfinance (2015-2024)
 - Performs comprehensive exploratory data analysis
 - Examines price relationships, trading patterns, and correlation structure
 - Establishes data quality and alignment across all securities
 
 ### 2. Data Preprocessing (`02_data_preprocessing.ipynb`)
 - Converts prices to log returns for better statistical properties
-- Computes realized volatility using 21-day rolling windows
+- Computes realized volatility using 21-day and 63-day rolling windows (annualized)
 - Creates equal-weight portfolio for diversification analysis
 - Generates multi-horizon volatility features for modeling
 - Performs statistical analysis of return distributions
 
 ### 3. Generic Time Series Modeling (`03_generic_timeseries_modeling.ipynb`)
 - Applies traditional forecasting methods: **ARIMA**, **Exponential Smoothing**, and **Prophet**
-- Conducts stationarity testing and diagnostic analysis
+- Conducts hyperparameter grid search and diagnostic analysis
 - Treats realized volatility as a generic univariate time series
 - Evaluates performance using standard metrics (MAE, RMSE, MAPE, R²)
 - Demonstrates limitations when volatility-specific properties are ignored
 
-### 4. Quantitative Finance Modeling (`04_quant_finance_modeling.ipynb`)
+### 4. Generic Modeling Cross-Validation (`04_generic_modeling_cross_validation.ipynb`)
+- Implements rolling window cross-validation with three temporal splits
+- Validates findings across different market regimes (70% train, 30% test per fold)
+- Computes confidence intervals for performance metrics
+- Confirms that poor performance of generic models is consistent, not an artifact
+- Applies rigorous model evaluation methodology to ensure generalization
+
+### 5. Quantitative Finance Modeling (`05_quant_finance_modeling.ipynb`)
 - Implements specialized volatility models: **EWMA** and **GARCH(1,1)**
 - Models conditional variance explicitly through recursive variance equations
-- Captures volatility clustering and persistence effects
+- Captures volatility clustering and persistence effects (λ=0.94 for EWMA)
 - Compares performance against generic approaches
-- Provides theoretical foundation for superior performance
-
-## Key Findings
-
-### Generic Models Fall Short
-- ARIMA, Exponential Smoothing, and Prophet achieved **negative or near-zero R² scores**
-- These models assume independence and fail to capture volatility clustering
-- They treat each volatility observation as unrelated to market conditions
-
-### Specialized Models Excel
-- **EWMA** achieved positive R² scores by modeling exponential decay in volatility impact
-- **GARCH(1,1)** demonstrated superior performance by explicitly modeling:
-  - Volatility persistence through lagged conditional variance
-  - News impact through lagged squared returns
-  - Long-run variance levels through constant terms
-
-### Performance Comparison
-| Model Type | Typical R² Range | Key Limitation |
-|------------|------------------|----------------|
-| ARIMA | -0.10 to 0.00 | Ignores volatility clustering |
-| Exp Smoothing | -1.25 to -0.03 | No conditional variance modeling |
-| Prophet | -1.06 to -0.10 | Treats volatility as trend/seasonal |
-| **EWMA** | **0.15 to 0.40** | **Captures persistence** |
-| **GARCH(1,1)** | **0.25 to 0.50** | **Models conditional heteroskedasticity** |
-
-## Practical Implications
-
-### Risk Management
-- Accurate volatility forecasts are crucial for Value-at-Risk (VaR) calculations
-- Portfolio risk depends heavily on volatility predictions
-- Regulatory capital requirements often mandate sophisticated volatility models
-
-### Derivatives Pricing
-- Options pricing models (Black-Scholes, Heston) require volatility inputs
-- Volatility trading strategies depend on accurate forecasting
-- Risk-neutral densities are sensitive to volatility assumptions
-
-### Portfolio Optimization
-- Mean-variance optimization requires volatility forecasts
-- Risk parity strategies need reliable volatility estimates
-- Dynamic hedging strategies adjust based on volatility predictions
+- Achieves R² scores of 0.79-0.86 vs. near-zero for classical methods
 
 ## Technical Requirements
 
@@ -106,19 +77,18 @@ yfinance>=0.1.87   # Yahoo Finance data
 
 ```
 project/
-├── 01_data_collection_exploration.ipynb    # Data acquisition and EDA
-├── 02_data_preprocessing.ipynb             # Feature engineering
-├── 03_generic_timeseries_modeling.ipynb    # Traditional forecasting
-├── 04_quant_finance_modeling.ipynb         # Volatility-specific models
-├── data/
-│   ├── raw/                                # Original downloaded data
-│   └── processed/                          # Engineered features
-├── requirements.txt                        # Python dependencies
-└── README.md                              # This file
+├── 01_data_collection_exploration.ipynb         # Data acquisition and EDA
+├── 02_data_preprocessing.ipynb                  # Feature engineering
+├── 03_generic_timeseries_modeling.ipynb         # Traditional forecasting methods
+├── 04_generic_modeling_cross_validation.ipynb   # Rolling window cross-validation
+├── 05_quant_finance_modeling.ipynb              # Volatility-specific models (EWMA, GARCH)
+├── requirements.txt                             # Python dependencies
+├── README.md                                    # This file
+├── assets/
+│   ├── proposal.md                              # Initial project proposal
+│   └── report.md                                # Comprehensive final report
+└── data/
+    ├── raw/
+    │   └── mag7_prices.csv                      # Original OHLCV data (2015-2024)
+    └── processed/                               # Processed datasets for modeling
 ```
-
-## Conclusion
-
-This project demonstrates that **domain expertise matters significantly** in financial modeling. While generic time series methods work well for many forecasting problems, financial volatility requires specialized approaches that acknowledge its unique statistical properties. The superior performance of EWMA and GARCH models validates decades of financial econometrics research and highlights the importance of incorporating financial theory into practical modeling workflows.
-
-The analysis provides a foundation for more advanced volatility modeling techniques such as multivariate GARCH, stochastic volatility models, and machine learning approaches that incorporate volatility-specific features.
